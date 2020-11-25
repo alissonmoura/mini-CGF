@@ -60,7 +60,39 @@ public class DestinationFederate extends NullFederateAmbassador {
 
     public void register(HlaDestination destination) {
         // TODO Auto-generated method stub
-
+        try {
+            AttributeHandle _attributeIdX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
+            AttributeHandle _attributeIdY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+            AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
+            attributeSet.add(_attributeIdX);
+            attributeSet.add(_attributeIdY);
+            rtIambassador.publishObjectClassAttributes(objectClassHandle, attributeSet);
+            ObjectInstanceHandle objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle, "Destination");
+        } catch (NotConnected notConnected) {
+            notConnected.printStackTrace();
+        } catch (FederateNotExecutionMember federateNotExecutionMember) {
+            federateNotExecutionMember.printStackTrace();
+        } catch (RTIinternalError rtIinternalError) {
+            rtIinternalError.printStackTrace();
+        } catch (InvalidObjectClassHandle invalidObjectClassHandle) {
+            invalidObjectClassHandle.printStackTrace();
+        } catch (NameNotFound nameNotFound) {
+            nameNotFound.printStackTrace();
+        } catch (SaveInProgress saveInProgress) {
+            saveInProgress.printStackTrace();
+        } catch (AttributeNotDefined attributeNotDefined) {
+            attributeNotDefined.printStackTrace();
+        } catch (RestoreInProgress restoreInProgress) {
+            restoreInProgress.printStackTrace();
+        } catch (ObjectClassNotDefined objectClassNotDefined) {
+            objectClassNotDefined.printStackTrace();
+        } catch (ObjectInstanceNameInUse objectInstanceNameInUse) {
+            objectInstanceNameInUse.printStackTrace();
+        } catch (ObjectClassNotPublished objectClassNotPublished) {
+            objectClassNotPublished.printStackTrace();
+        } catch (ObjectInstanceNameNotReserved objectInstanceNameNotReserved) {
+            objectInstanceNameNotReserved.printStackTrace();
+        }
     }
 
     public void update(HlaDestination destination) throws RTIexception {
