@@ -1,4 +1,7 @@
 package hla.destination;
 
-public class DestinationChangedListener {
+public interface DestinationChangedListener {
+
+    void destinationChanged(HlaDestination destination);
+
 }

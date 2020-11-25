@@ -1,4 +1,7 @@
 package hla.aircraft;
 
-public class AircraftChangedListener {
+public interface AircraftChangedListener {
+
+    void aircraftChanged(HlaAircraft aircraft);
+
 }

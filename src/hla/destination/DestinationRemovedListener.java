@@ -1,4 +1,7 @@
 package hla.destination;
 
-public class DestinationRemovedListener {
+public interface DestinationRemovedListener {
+
+    public void destinationRemoved(HlaDestination destination);
+
 }
