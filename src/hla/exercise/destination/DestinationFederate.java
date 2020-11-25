@@ -22,9 +22,9 @@ public class DestinationFederate extends NullFederateAmbassador {
 
 
     public DestinationFederate(DestinationCallback destinationCallback) {
-        formModuleName = "C:\\Users\\User1\\IdeaProjects\\CFG\\mini-CGF\\HLA-course.xml";
-        federationExecutionName = "DestinationDestination";
-        federationType = "Destination";
+        formModuleName = "HLA-course.xml";
+        federationExecutionName = "aircraft-destination";
+        federationType = "AircraftDestination";
     }
 
     public DestinationFederate() {
