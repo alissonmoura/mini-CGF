@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="true"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <objectModel xsi:schemaLocation="http://www.sisostds.org/schemas/IEEE1516-2010 http://www.sisostds.org/schemas/IEEE1516-DIF-2010.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sisostds.org/schemas/IEEE1516-2010">
     <modelIdentification>
         <name>New</name>
