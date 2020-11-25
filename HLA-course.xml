@@ -1,1 +1,105 @@
-<?xml version="1.0" encoding="UTF-8" standalone="true"?><objectModel xsi:schemaLocation="http://www.sisostds.org/schemas/IEEE1516-2010 http://www.sisostds.org/schemas/IEEE1516-DIF-2010.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sisostds.org/schemas/IEEE1516-2010"><modelIdentification><name>New</name></modelIdentification><objects><objectClass><name>HLAobjectRoot</name><objectClass><name>Aircraft</name><sharing>PublishSubscribe</sharing><semantics>My aircraft</semantics><attribute><name>x</name><dataType>Double</dataType><updateType>NA</updateType><ownership>NoTransfer</ownership><sharing>PublishSubscribe</sharing><transportation>HLAreliable</transportation><order>Receive</order></attribute><attribute><name>y</name><dataType>Double</dataType><updateType>NA</updateType><ownership>NoTransfer</ownership><sharing>Neither</sharing><transportation>HLAbestEffort</transportation><order>Receive</order></attribute><attribute><name>orientation</name><dataType>Double</dataType><updateType>NA</updateType><updateCondition/><ownership>NoTransfer</ownership><sharing>Neither</sharing><transportation>HLAbestEffort</transportation><order>Receive</order><semantics/></attribute></objectClass><objectClass><name>Destination</name><sharing>PublishSubscribe</sharing><semantics>Aircraft destination</semantics><attribute><name>x</name><dataType>Integer</dataType><updateType>NA</updateType><ownership>NoTransfer</ownership><sharing>PublishSubscribe</sharing><transportation>HLAreliable</transportation><order>Receive</order></attribute><attribute><name>y</name><dataType>Integer</dataType><updateType>NA</updateType><ownership>NoTransfer</ownership><sharing>Neither</sharing><transportation>HLAbestEffort</transportation><order>Receive</order></attribute></objectClass></objectClass></objects><interactions><interactionClass><name>HLAinteractionRoot</name></interactionClass></interactions><switches><autoProvide isEnabled="false"/><conveyRegionDesignatorSets isEnabled="false"/><conveyProducingFederate isEnabled="false"/><attributeScopeAdvisory isEnabled="false"/><attributeRelevanceAdvisory isEnabled="false"/><objectClassRelevanceAdvisory isEnabled="false"/><interactionRelevanceAdvisory isEnabled="false"/><serviceReporting isEnabled="false"/><exceptionReporting isEnabled="false"/><delaySubscriptionEvaluation isEnabled="false"/><automaticResignAction resignAction="CancelThenDeleteThenDivest"/></switches><dataTypes><simpleDataTypes><simpleData><name>Double</name><representation>HLAfloat64LE</representation><units>NA</units><resolution>NA</resolution><accuracy>NA</accuracy><semantics>-NULL-</semantics></simpleData><simpleData><name>Integer</name><representation>HLAinteger32LE</representation><units>NA</units><resolution>NA</resolution><accuracy>NA</accuracy><semantics>-NULL-</semantics></simpleData></simpleDataTypes></dataTypes></objectModel>
+<?xml version="1.0" encoding="UTF-8" standalone="true"?>
+<objectModel xsi:schemaLocation="http://www.sisostds.org/schemas/IEEE1516-2010 http://www.sisostds.org/schemas/IEEE1516-DIF-2010.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sisostds.org/schemas/IEEE1516-2010">
+    <modelIdentification>
+        <name>New</name>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>Aircraft</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>My aircraft</semantics>
+                <attribute>
+                    <name>x</name>
+                    <dataType>Double</dataType>
+                    <updateType>NA</updateType>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                </attribute><attribute>
+                <name>y</name>
+                <dataType>Double</dataType>
+                <updateType>NA</updateType>
+                <ownership>NoTransfer</ownership>
+                <sharing>Neither</sharing>
+                <transportation>HLAbestEffort</transportation>
+                <order>Receive</order>
+            </attribute>
+                <attribute>
+                    <name>orientation</name>
+                    <dataType>Double</dataType>
+                    <updateType>NA</updateType>
+                    <updateCondition/>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>Neither</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                    <semantics/>
+                </attribute>
+            </objectClass>
+            <objectClass>
+                <name>Destination</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>Aircraft destination</semantics>
+                <attribute>
+                    <name>x</name>
+                    <dataType>Integer</dataType>
+                    <updateType>NA</updateType>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                </attribute>
+                <attribute>
+                    <name>y</name>
+                    <dataType>Integer</dataType>
+                    <updateType>NA</updateType>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>Neither</sharing>
+                    <transportation>HLAbestEffort</transportation>
+                    <order>Receive</order>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+        </interactionClass>
+    </interactions>
+    <switches>
+        <autoProvide isEnabled="false"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <dataTypes>
+        <simpleDataTypes>
+            <simpleData>
+                <name>Double</name>
+                <representation>HLAfloat64LE</representation>
+                <units>NA</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>-NULL-</semantics>
+            </simpleData>
+            <simpleData>
+                <name>Integer</name>
+                <representation>HLAinteger32LE</representation>
+                <units>NA</units>
+                <resolution>NA</resolution>
+                <accuracy>NA</accuracy>
+                <semantics>-NULL-</semantics>
+            </simpleData>
+        </simpleDataTypes>
+    </dataTypes>
+</objectModel>
