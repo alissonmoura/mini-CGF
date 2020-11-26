@@ -24,7 +24,7 @@ public class DestinationFederate extends NullFederateAmbassador {
     public DestinationFederate(DestinationCallback destinationCallback) {
         formModuleName = "HLA-course.xml";
         federationExecutionName = "aircraft-destination";
-        federationType = "AircraftDestination";
+        federationType = "Destination";
     }
 
     public DestinationFederate() {
