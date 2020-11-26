@@ -5,7 +5,6 @@ import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.encoding.HLAinteger32LE;
-import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
 
 import java.net.MalformedURLException;
@@ -17,7 +16,8 @@ public class DestinationFederate extends NullFederateAmbassador {
     private RTIambassador rtIambassador;
     private URL formModule;
     private String formModuleName;
-    private ObjectClassHandle objectClassHandle;
+    private ObjectClassHandle objectClassDestinationHandle;
+    private ObjectClassHandle objectClassAircraftHandle;
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
@@ -72,18 +72,19 @@ public class DestinationFederate extends NullFederateAmbassador {
         }
 
         rtIambassador.joinFederationExecution(federationType,federationExecutionName);
-        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
+        objectClassDestinationHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
+        objectClassAircraftHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Aircraft");
     }
 
     public void register(HlaDestination destination) {
         try {
-            attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
-            attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+            attributeX = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "x");
+            attributeY = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "y");
             AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
             attributeSet.add(attributeX);
             attributeSet.add(attributeY);
-            rtIambassador.publishObjectClassAttributes(objectClassHandle, attributeSet);
-            objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle);
+            rtIambassador.publishObjectClassAttributes(objectClassDestinationHandle, attributeSet);
+            objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassDestinationHandle);
         } catch (NotConnected notConnected) {
             notConnected.printStackTrace();
         } catch (FederateNotExecutionMember federateNotExecutionMember) {

@@ -1,14 +1,12 @@
 package hla.exercise.aircraft;
 
 import hla.aircraft.AircraftCallback;
-import hla.aircraft.AircraftSimulation;
 import hla.aircraft.HlaAircraft;
 import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.encoding.HLAinteger32LE;
-import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
 import util.RandomCoordinate;
 
@@ -21,7 +19,8 @@ public class AircraftFederate extends NullFederateAmbassador {
     private RTIambassador rtIambassador;
     private URL formModule;
     private String formModuleName;
-    private ObjectClassHandle objectClassHandle;
+    private ObjectClassHandle objectClassDestinationHandle;
+    private ObjectClassHandle objectClassAircraftHandle;
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
@@ -65,16 +64,13 @@ public class AircraftFederate extends NullFederateAmbassador {
         }
 
         rtIambassador.joinFederationExecution(federationType,federationExecutionName);
-        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
-
-
-
-
+        objectClassDestinationHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
+        objectClassAircraftHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Aircraft");
     }
 
     public void register(HlaAircraft aircraft) throws NotConnected, FederateNotExecutionMember, NameNotFound, RTIinternalError, InvalidObjectClassHandle, AttributeNotDefined, ObjectClassNotDefined, RestoreInProgress, SaveInProgress {
-        attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
-        attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+        attributeX = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "x");
+        attributeY = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "y");
         //attributeOrientation = rtIambassador.getAttributeHandle(objectClassHandle, "orientation");
 
 
@@ -86,7 +82,7 @@ public class AircraftFederate extends NullFederateAmbassador {
         //attributeSet.add(attributeOrientation);
 
 
-        rtIambassador.subscribeObjectClassAttributes(objectClassHandle,attributeSet);
+        rtIambassador.subscribeObjectClassAttributes(objectClassDestinationHandle,attributeSet);
 
 
     }
