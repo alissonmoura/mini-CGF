@@ -52,7 +52,7 @@ public class DestinationFederate extends NullFederateAmbassador {
         } catch (InconsistentFDD inconsistentFDD) {
             inconsistentFDD.printStackTrace();
         } catch (FederationExecutionAlreadyExists federationExecutionAlreadyExists) {
-            federationExecutionAlreadyExists.printStackTrace();
+            System.out.println("Failed");
         } catch (CallNotAllowedFromWithinCallback callNotAllowedFromWithinCallback) {
             callNotAllowedFromWithinCallback.printStackTrace();
         } catch (MalformedURLException e) {

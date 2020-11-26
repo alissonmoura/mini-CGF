@@ -1,13 +1,16 @@
 package hla.exercise.aircraft;
 
 import hla.aircraft.AircraftCallback;
+import hla.aircraft.AircraftSimulation;
 import hla.aircraft.HlaAircraft;
+import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.encoding.HLAinteger32LE;
 import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
+import util.RandomCoordinate;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +28,7 @@ public class AircraftFederate extends NullFederateAmbassador {
     private AttributeHandle attributeX;
     private AttributeHandle attributeY;
     private AttributeHandle attributeOrientation;
+    private HlaDestination destination = new HlaDestination(RandomCoordinate.getX(), RandomCoordinate.getY());
 
 
     public AircraftFederate(AircraftCallback aircraftCallback) {
@@ -90,8 +94,8 @@ public class AircraftFederate extends NullFederateAmbassador {
         System.out.println("discoverObjectInstance");
     }
 
-    public void update(HlaAircraft aircraft) throws RTIexception {
-
+    public void update(HlaAircraft aircraft, AircraftSimulation simulation) throws RTIexception {
+       simulation.reflect(destination);
     }
 
     @Override
@@ -111,11 +115,13 @@ public class AircraftFederate extends NullFederateAmbassador {
                 xDecoder.decode(theAttributes.get(attributeX));
                 int x = xDecoder.getValue();
                 System.out.println("X -> " + x);
+                destination.setX(x);
             }
             if (theAttributes.containsKey(attributeY)) {
                 yDecoder.decode(theAttributes.get(attributeY));
                 int y = yDecoder.getValue();
                 System.out.println("Y -> " + y);
+                destination.setY(y);
             }
 
 
