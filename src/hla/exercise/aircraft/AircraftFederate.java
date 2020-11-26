@@ -19,6 +19,9 @@ public class AircraftFederate extends NullFederateAmbassador {
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
+    private AttributeHandle attributeX;
+    private AttributeHandle attributeY;
+    private AttributeHandle attributeOrientation;
 
 
     public AircraftFederate(AircraftCallback aircraftCallback) {
@@ -58,9 +61,27 @@ public class AircraftFederate extends NullFederateAmbassador {
 
     }
 
-    public void register(HlaAircraft aircraft) {
-        // TODO Auto-generated method stub
+    public void register(HlaAircraft aircraft) throws NotConnected, FederateNotExecutionMember, NameNotFound, RTIinternalError, InvalidObjectClassHandle, AttributeNotDefined, ObjectClassNotDefined, RestoreInProgress, SaveInProgress {
+        attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
+        attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+        attributeOrientation = rtIambassador.getAttributeHandle(objectClassHandle, "orientation");
 
+
+        AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
+
+
+        attributeSet.add(attributeX);
+        attributeSet.add(attributeY);
+        attributeSet.add(attributeOrientation);
+
+
+        rtIambassador.subscribeObjectClassAttributes(objectClassHandle,attributeSet);
+
+
+    }
+
+    @Override
+    public void discoverObjectInstance(ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName) throws FederateInternalError {
     }
 
     public void update(HlaAircraft aircraft) throws RTIexception {
