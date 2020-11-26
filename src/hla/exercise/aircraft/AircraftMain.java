@@ -47,7 +47,7 @@ public class AircraftMain {
                 @Override
                 public void aircraftChanged(HlaAircraft aircraft) {
                     try {
-                        federate.update(aircraft, simulation);
+                        federate.update(aircraft);
                     } catch (RTIexception e) {
                         e.printStackTrace();
                     }

@@ -29,12 +29,14 @@ public class AircraftFederate extends NullFederateAmbassador {
     private AttributeHandle attributeY;
     private AttributeHandle attributeOrientation;
     private HlaDestination destination = new HlaDestination(RandomCoordinate.getX(), RandomCoordinate.getY());
+    private AircraftCallback aircraftCallback;
 
 
     public AircraftFederate(AircraftCallback aircraftCallback) {
         formModuleName = "HLA-course.xml";
         federationExecutionName = "aircraft-destination";
         federationType = "Aircraft";
+        this.aircraftCallback =  aircraftCallback;
     }
 
     public AircraftFederate() {
@@ -94,8 +96,8 @@ public class AircraftFederate extends NullFederateAmbassador {
         System.out.println("discoverObjectInstance");
     }
 
-    public void update(HlaAircraft aircraft, AircraftSimulation simulation) throws RTIexception {
-       simulation.reflect(destination);
+    public void update(HlaAircraft aircraft) throws RTIexception {
+       this.aircraftCallback.reflect(destination);
     }
 
     @Override
