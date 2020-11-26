@@ -29,7 +29,7 @@ public class DestinationFederate extends NullFederateAmbassador {
     public DestinationFederate(DestinationCallback destinationCallback) {
         formModuleName = "HLA-course.xml";
         federationExecutionName = "aircraft-destination";
-        federationType = "AircraftDestination";
+        federationType = "Destination";
     }
 
     public DestinationFederate() {
@@ -108,12 +108,12 @@ public class DestinationFederate extends NullFederateAmbassador {
     }
 
     public void update(HlaDestination destination) throws RTIexception {
-        AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1);
+        AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1024);
         HLAinteger32LE x = encoderFactory.createHLAinteger32LE(destination.getX());
         HLAinteger32LE y = encoderFactory.createHLAinteger32LE(destination.getY());
         attributeValues.put(attributeX, x.toByteArray());
         attributeValues.put(attributeY, y.toByteArray());
-        rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, null);
+        rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, new byte[0]);
         System.out.println("PRINT");
     }
 }
