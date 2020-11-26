@@ -29,6 +29,7 @@ public class AircraftFederate extends NullFederateAmbassador {
     private AttributeHandle attributeOrientation;
     private HlaDestination destination = new HlaDestination(RandomCoordinate.getX(), RandomCoordinate.getY());
     private AircraftCallback aircraftCallback;
+    private ObjectInstanceHandle objectInstanceAircraftHandle;
 
 
     public AircraftFederate(AircraftCallback aircraftCallback) {
@@ -69,6 +70,11 @@ public class AircraftFederate extends NullFederateAmbassador {
     }
 
     public void register(HlaAircraft aircraft) throws NotConnected, FederateNotExecutionMember, NameNotFound, RTIinternalError, InvalidObjectClassHandle, AttributeNotDefined, ObjectClassNotDefined, RestoreInProgress, SaveInProgress {
+        registerDestination();
+        registerAircraft();
+    }
+
+    private void registerDestination() throws NameNotFound, InvalidObjectClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress {
         attributeX = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "x");
         attributeY = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "y");
         //attributeOrientation = rtIambassador.getAttributeHandle(objectClassHandle, "orientation");
@@ -83,8 +89,38 @@ public class AircraftFederate extends NullFederateAmbassador {
 
 
         rtIambassador.subscribeObjectClassAttributes(objectClassDestinationHandle,attributeSet);
+    }
 
-
+    private void registerAircraft() {
+        try {
+            attributeX = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "x");
+            attributeY = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "y");
+            AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
+            attributeSet.add(attributeX);
+            attributeSet.add(attributeY);
+            rtIambassador.publishObjectClassAttributes(objectClassAircraftHandle, attributeSet);
+            objectInstanceAircraftHandle = rtIambassador.registerObjectInstance(objectClassAircraftHandle);
+        } catch (NotConnected notConnected) {
+            notConnected.printStackTrace();
+        } catch (FederateNotExecutionMember federateNotExecutionMember) {
+            federateNotExecutionMember.printStackTrace();
+        } catch (RTIinternalError rtIinternalError) {
+            rtIinternalError.printStackTrace();
+        } catch (InvalidObjectClassHandle invalidObjectClassHandle) {
+            invalidObjectClassHandle.printStackTrace();
+        } catch (NameNotFound nameNotFound) {
+            nameNotFound.printStackTrace();
+        } catch (SaveInProgress saveInProgress) {
+            saveInProgress.printStackTrace();
+        } catch (AttributeNotDefined attributeNotDefined) {
+            attributeNotDefined.printStackTrace();
+        } catch (RestoreInProgress restoreInProgress) {
+            restoreInProgress.printStackTrace();
+        } catch (ObjectClassNotDefined objectClassNotDefined) {
+            objectClassNotDefined.printStackTrace();
+        } catch (ObjectClassNotPublished objectClassNotPublished) {
+            objectClassNotPublished.printStackTrace();
+        }
     }
 
     @Override

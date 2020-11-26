@@ -77,6 +77,10 @@ public class DestinationFederate extends NullFederateAmbassador {
     }
 
     public void register(HlaDestination destination) {
+        registerDestination();
+    }
+
+    private void registerDestination() {
         try {
             attributeX = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "x");
             attributeY = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "y");
@@ -115,6 +119,5 @@ public class DestinationFederate extends NullFederateAmbassador {
         attributeValues.put(attributeX, x.toByteArray());
         attributeValues.put(attributeY, y.toByteArray());
         rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, new byte[0]);
-        System.out.println("PRINT");
     }
 }
