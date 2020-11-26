@@ -2,11 +2,14 @@ package hla.exercise.aircraft;
 
 import hla.aircraft.AircraftCallback;
 import hla.aircraft.HlaAircraft;
+import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAinteger32LE;
 import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
+import util.RandomCoordinate;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,12 +24,17 @@ public class AircraftFederate extends NullFederateAmbassador {
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
+    private AttributeHandle attributeX;
+    private AttributeHandle attributeY;
+    private HlaDestination destination = new HlaDestination(RandomCoordinate.getX(), RandomCoordinate.getY());
+    private AircraftCallback aircraftCallback;
 
 
     public AircraftFederate(AircraftCallback aircraftCallback) {
         formModuleName = "HLA-course.xml";
         federationExecutionName = "aircraft-destination";
         federationType = "Aircraft";
+        this.aircraftCallback = aircraftCallback;
     }
 
     public AircraftFederate() {
@@ -64,8 +72,8 @@ public class AircraftFederate extends NullFederateAmbassador {
         // TODO Auto-generated method stub
 
         try {
-            AttributeHandle attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
-            AttributeHandle attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+            attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
+            attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
 
             AttributeHandleSetFactory attributeHandleSetFactory = rtIambassador.getAttributeHandleSetFactory();
 
@@ -99,6 +107,7 @@ public class AircraftFederate extends NullFederateAmbassador {
 
     public void update(HlaAircraft aircraft) throws RTIexception {
 
+        this.aircraftCallback.reflect(destination);
 
     }
 
@@ -108,8 +117,28 @@ public class AircraftFederate extends NullFederateAmbassador {
                                        byte[] userSuppliedTag,
                                        OrderType sentOrdering,
                                        TransportationTypeHandle theTransport,
-                                       SupplementalReflectInfo reflectInfo) throws FederateInternalError {
+                                       SupplementalReflectInfo reflectInfo) throws FederateInternalError
+    {
+        try
+        {
+            final HLAinteger32LE xDecoder = encoderFactory.createHLAinteger32LE();
+            final HLAinteger32LE yDecoder = encoderFactory.createHLAinteger32LE();
 
-        
+            if (theAttributes.containsKey(attributeX)) {
+                xDecoder.decode(theAttributes.get(attributeX));
+                int x = xDecoder.getValue();
+                System.out.println("X -> " + x);
+                destination.setX(x);
+            }
+            if (theAttributes.containsKey(attributeY)) {
+                yDecoder.decode(theAttributes.get(attributeY));
+                int y = yDecoder.getValue();
+                System.out.println("Y -> " + y);
+                destination.setY(y);
+            }
+
+        } catch (DecoderException e) {
+            System.out.println("Failed to decode incoming attribute");
+        }
     }
 }
