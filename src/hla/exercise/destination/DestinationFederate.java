@@ -37,55 +37,42 @@ public class DestinationFederate extends NullFederateAmbassador {
 
     }
 
-    public void init() {
+    public void init() throws SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, RTIinternalError, FederationExecutionDoesNotExist, CallNotAllowedFromWithinCallback, CouldNotCreateLogicalTimeFactory, NotConnected, NameNotFound, FederateNotExecutionMember {
         try {
             rtiFactory = RtiFactoryFactory.getRtiFactory();
-            encoderFactory  = rtiFactory.getEncoderFactory();
+            encoderFactory = rtiFactory.getEncoderFactory();
             rtIambassador = rtiFactory.getRtiAmbassador();
             rtIambassador.connect(this, CallbackModel.HLA_IMMEDIATE);
             formModule = Paths.get(formModuleName).toUri().toURL();
-            rtIambassador.createFederationExecution(federationExecutionName,formModule);
-            rtIambassador.joinFederationExecution(federationType,federationExecutionName);
-            objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
-        } catch (NotConnected notConnected) {
-            notConnected.printStackTrace();
-        } catch (CouldNotOpenFDD couldNotOpenFDD) {
-            couldNotOpenFDD.printStackTrace();
-        } catch (ErrorReadingFDD errorReadingFDD) {
-            errorReadingFDD.printStackTrace();
-        } catch (InconsistentFDD inconsistentFDD) {
-            inconsistentFDD.printStackTrace();
-        } catch (ConnectionFailed connectionFailed) {
-            connectionFailed.printStackTrace();
+            rtIambassador.createFederationExecution(federationExecutionName, formModule);
         } catch (RTIinternalError rtIinternalError) {
             rtIinternalError.printStackTrace();
-        } catch (CallNotAllowedFromWithinCallback callNotAllowedFromWithinCallback) {
-            callNotAllowedFromWithinCallback.printStackTrace();
         } catch (UnsupportedCallbackModel unsupportedCallbackModel) {
             unsupportedCallbackModel.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (InvalidLocalSettingsDesignator invalidLocalSettingsDesignator) {
-            invalidLocalSettingsDesignator.printStackTrace();
-        } catch (AlreadyConnected alreadyConnected) {
-            alreadyConnected.printStackTrace();
-        } catch (FederateNotExecutionMember federateNotExecutionMember) {
-            federateNotExecutionMember.printStackTrace();
-        } catch (SaveInProgress saveInProgress) {
-            saveInProgress.printStackTrace();
-        } catch (CouldNotCreateLogicalTimeFactory couldNotCreateLogicalTimeFactory) {
-            couldNotCreateLogicalTimeFactory.printStackTrace();
-        } catch (RestoreInProgress restoreInProgress) {
-            restoreInProgress.printStackTrace();
-        } catch (NameNotFound nameNotFound) {
-            nameNotFound.printStackTrace();
-        } catch (FederationExecutionDoesNotExist federationExecutionDoesNotExist) {
-            federationExecutionDoesNotExist.printStackTrace();
-        } catch (FederateAlreadyExecutionMember federateAlreadyExecutionMember) {
-            federateAlreadyExecutionMember.printStackTrace();
+        } catch (InconsistentFDD inconsistentFDD) {
+            inconsistentFDD.printStackTrace();
         } catch (FederationExecutionAlreadyExists federationExecutionAlreadyExists) {
             federationExecutionAlreadyExists.printStackTrace();
+        } catch (CallNotAllowedFromWithinCallback callNotAllowedFromWithinCallback) {
+            callNotAllowedFromWithinCallback.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (CouldNotOpenFDD couldNotOpenFDD) {
+            couldNotOpenFDD.printStackTrace();
+        } catch (InvalidLocalSettingsDesignator invalidLocalSettingsDesignator) {
+            invalidLocalSettingsDesignator.printStackTrace();
+        } catch (ConnectionFailed connectionFailed) {
+            connectionFailed.printStackTrace();
+        } catch (NotConnected notConnected) {
+            notConnected.printStackTrace();
+        } catch (ErrorReadingFDD errorReadingFDD) {
+            errorReadingFDD.printStackTrace();
+        } catch (AlreadyConnected alreadyConnected) {
+            alreadyConnected.printStackTrace();
         }
+
+        rtIambassador.joinFederationExecution(federationType,federationExecutionName);
+        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
     }
 
     public void register(HlaDestination destination) {
@@ -96,7 +83,7 @@ public class DestinationFederate extends NullFederateAmbassador {
             attributeSet.add(attributeX);
             attributeSet.add(attributeY);
             rtIambassador.publishObjectClassAttributes(objectClassHandle, attributeSet);
-            objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle, "Destination");
+            objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle);
         } catch (NotConnected notConnected) {
             notConnected.printStackTrace();
         } catch (FederateNotExecutionMember federateNotExecutionMember) {
@@ -115,12 +102,8 @@ public class DestinationFederate extends NullFederateAmbassador {
             restoreInProgress.printStackTrace();
         } catch (ObjectClassNotDefined objectClassNotDefined) {
             objectClassNotDefined.printStackTrace();
-        } catch (ObjectInstanceNameInUse objectInstanceNameInUse) {
-            objectInstanceNameInUse.printStackTrace();
         } catch (ObjectClassNotPublished objectClassNotPublished) {
             objectClassNotPublished.printStackTrace();
-        } catch (ObjectInstanceNameNotReserved objectInstanceNameNotReserved) {
-            objectInstanceNameNotReserved.printStackTrace();
         }
     }
 
@@ -131,5 +114,6 @@ public class DestinationFederate extends NullFederateAmbassador {
         attributeValues.put(attributeX, x.toByteArray());
         attributeValues.put(attributeY, y.toByteArray());
         rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, null);
+        System.out.println("PRINT");
     }
 }
