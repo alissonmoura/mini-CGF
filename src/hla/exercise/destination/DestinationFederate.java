@@ -56,10 +56,45 @@ public class DestinationFederate extends NullFederateAmbassador {
         objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
 
 
+
     }
 
-    public void register(HlaDestination destination) {
+    public void register(HlaDestination destination) throws NotConnected, FederateNotExecutionMember {
         // TODO Auto-generated method stub
+
+
+        try {
+            AttributeHandle attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
+            AttributeHandle attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+
+            AttributeHandleSetFactory attributeHandleSetFactory = rtIambassador.getAttributeHandleSetFactory();
+            AttributeHandleSet attributeHandleSet = attributeHandleSetFactory.create();
+            attributeHandleSet.add(attributeX);
+            attributeHandleSet.add(attributeY);
+
+            rtIambassador.publishObjectClassAttributes(objectClassHandle, attributeHandleSet);
+
+            //startRegistrationForObjectClass(objectClassHandle);
+
+        } catch (NameNotFound nameNotFound) {
+            nameNotFound.printStackTrace();
+        } catch (InvalidObjectClassHandle invalidObjectClassHandle) {
+            invalidObjectClassHandle.printStackTrace();
+        } catch (FederateNotExecutionMember federateNotExecutionMember) {
+            federateNotExecutionMember.printStackTrace();
+        } catch (NotConnected notConnected) {
+            notConnected.printStackTrace();
+        } catch (RTIinternalError rtIinternalError) {
+            rtIinternalError.printStackTrace();
+        } catch (SaveInProgress saveInProgress) {
+            saveInProgress.printStackTrace();
+        } catch (AttributeNotDefined attributeNotDefined) {
+            attributeNotDefined.printStackTrace();
+        } catch (RestoreInProgress restoreInProgress) {
+            restoreInProgress.printStackTrace();
+        } catch (ObjectClassNotDefined objectClassNotDefined) {
+            objectClassNotDefined.printStackTrace();
+        }
 
     }
 
