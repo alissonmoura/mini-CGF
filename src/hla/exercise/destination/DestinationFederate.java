@@ -4,6 +4,8 @@ import hla.destination.DestinationCallback;
 import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAinteger32LE;
+import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
 
 import java.net.MalformedURLException;
@@ -19,6 +21,9 @@ public class DestinationFederate extends NullFederateAmbassador {
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
+    private AttributeHandle attributeX;
+    private AttributeHandle attributeY;
+    private ObjectInstanceHandle objectInstanceHandle;
 
 
     public DestinationFederate(DestinationCallback destinationCallback) {
@@ -32,16 +37,16 @@ public class DestinationFederate extends NullFederateAmbassador {
 
     }
 
-    public void init() throws RTIinternalError, AlreadyConnected, CallNotAllowedFromWithinCallback, UnsupportedCallbackModel, ConnectionFailed, InvalidLocalSettingsDesignator, MalformedURLException, SaveInProgress, RestoreInProgress, FederateAlreadyExecutionMember, FederationExecutionDoesNotExist, CouldNotCreateLogicalTimeFactory, NotConnected, NameNotFound, FederateNotExecutionMember {
-        rtiFactory = RtiFactoryFactory.getRtiFactory();
-        encoderFactory  = rtiFactory.getEncoderFactory();
-        rtIambassador = rtiFactory.getRtiAmbassador();
-        rtIambassador.connect(this, CallbackModel.HLA_IMMEDIATE);
-        formModule = Paths.get(formModuleName).toUri().toURL();
+    public void init() {
         try {
+            rtiFactory = RtiFactoryFactory.getRtiFactory();
+            encoderFactory  = rtiFactory.getEncoderFactory();
+            rtIambassador = rtiFactory.getRtiAmbassador();
+            rtIambassador.connect(this, CallbackModel.HLA_IMMEDIATE);
+            formModule = Paths.get(formModuleName).toUri().toURL();
             rtIambassador.createFederationExecution(federationExecutionName,formModule);
-        } catch (FederationExecutionAlreadyExists e) {
-            System.out.println("Failed");
+            rtIambassador.joinFederationExecution(federationType,federationExecutionName);
+            objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
         } catch (NotConnected notConnected) {
             notConnected.printStackTrace();
         } catch (CouldNotOpenFDD couldNotOpenFDD) {
@@ -50,24 +55,48 @@ public class DestinationFederate extends NullFederateAmbassador {
             errorReadingFDD.printStackTrace();
         } catch (InconsistentFDD inconsistentFDD) {
             inconsistentFDD.printStackTrace();
+        } catch (ConnectionFailed connectionFailed) {
+            connectionFailed.printStackTrace();
+        } catch (RTIinternalError rtIinternalError) {
+            rtIinternalError.printStackTrace();
+        } catch (CallNotAllowedFromWithinCallback callNotAllowedFromWithinCallback) {
+            callNotAllowedFromWithinCallback.printStackTrace();
+        } catch (UnsupportedCallbackModel unsupportedCallbackModel) {
+            unsupportedCallbackModel.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (InvalidLocalSettingsDesignator invalidLocalSettingsDesignator) {
+            invalidLocalSettingsDesignator.printStackTrace();
+        } catch (AlreadyConnected alreadyConnected) {
+            alreadyConnected.printStackTrace();
+        } catch (FederateNotExecutionMember federateNotExecutionMember) {
+            federateNotExecutionMember.printStackTrace();
+        } catch (SaveInProgress saveInProgress) {
+            saveInProgress.printStackTrace();
+        } catch (CouldNotCreateLogicalTimeFactory couldNotCreateLogicalTimeFactory) {
+            couldNotCreateLogicalTimeFactory.printStackTrace();
+        } catch (RestoreInProgress restoreInProgress) {
+            restoreInProgress.printStackTrace();
+        } catch (NameNotFound nameNotFound) {
+            nameNotFound.printStackTrace();
+        } catch (FederationExecutionDoesNotExist federationExecutionDoesNotExist) {
+            federationExecutionDoesNotExist.printStackTrace();
+        } catch (FederateAlreadyExecutionMember federateAlreadyExecutionMember) {
+            federateAlreadyExecutionMember.printStackTrace();
+        } catch (FederationExecutionAlreadyExists federationExecutionAlreadyExists) {
+            federationExecutionAlreadyExists.printStackTrace();
         }
-
-        rtIambassador.joinFederationExecution(federationType,federationExecutionName);
-        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
-
-
     }
 
     public void register(HlaDestination destination) {
-        // TODO Auto-generated method stub
         try {
-            AttributeHandle _attributeIdX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
-            AttributeHandle _attributeIdY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+            attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
+            attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
             AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
-            attributeSet.add(_attributeIdX);
-            attributeSet.add(_attributeIdY);
+            attributeSet.add(attributeX);
+            attributeSet.add(attributeY);
             rtIambassador.publishObjectClassAttributes(objectClassHandle, attributeSet);
-            ObjectInstanceHandle objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle, "Destination");
+            objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle, "Destination");
         } catch (NotConnected notConnected) {
             notConnected.printStackTrace();
         } catch (FederateNotExecutionMember federateNotExecutionMember) {
@@ -96,7 +125,11 @@ public class DestinationFederate extends NullFederateAmbassador {
     }
 
     public void update(HlaDestination destination) throws RTIexception {
-
-
+        AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1);
+        HLAinteger32LE x = encoderFactory.createHLAinteger32LE(destination.getX());
+        HLAinteger32LE y = encoderFactory.createHLAinteger32LE(destination.getY());
+        attributeValues.put(attributeX, x.toByteArray());
+        attributeValues.put(attributeY, y.toByteArray());
+        rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, null);
     }
 }
