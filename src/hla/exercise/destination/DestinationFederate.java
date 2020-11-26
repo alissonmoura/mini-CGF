@@ -4,6 +4,7 @@ import hla.destination.DestinationCallback;
 import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAinteger32LE;
 import hla.rti1516e.exceptions.*;
 
 import java.net.MalformedURLException;
@@ -16,9 +17,12 @@ public class DestinationFederate extends NullFederateAmbassador {
     private URL formModule;
     private String formModuleName;
     private ObjectClassHandle objectClassHandle;
+    private ObjectInstanceHandle objectInstanceHandle;
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
+    private AttributeHandle attributeX;
+    private AttributeHandle attributeY;
 
 
     public DestinationFederate(DestinationCallback destinationCallback) {
@@ -54,9 +58,6 @@ public class DestinationFederate extends NullFederateAmbassador {
 
         rtIambassador.joinFederationExecution(federationType,federationExecutionName);
         objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
-
-
-
     }
 
     public void register(HlaDestination destination) throws NotConnected, FederateNotExecutionMember {
@@ -64,8 +65,8 @@ public class DestinationFederate extends NullFederateAmbassador {
 
 
         try {
-            AttributeHandle attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
-            AttributeHandle attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
+            attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
+            attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
 
             AttributeHandleSetFactory attributeHandleSetFactory = rtIambassador.getAttributeHandleSetFactory();
             AttributeHandleSet attributeHandleSet = attributeHandleSetFactory.create();
@@ -74,7 +75,7 @@ public class DestinationFederate extends NullFederateAmbassador {
 
             rtIambassador.publishObjectClassAttributes(objectClassHandle, attributeHandleSet);
 
-            //startRegistrationForObjectClass(objectClassHandle);
+            objectInstanceHandle = rtIambassador.registerObjectInstance(objectClassHandle);
 
         } catch (NameNotFound nameNotFound) {
             nameNotFound.printStackTrace();
@@ -94,12 +95,20 @@ public class DestinationFederate extends NullFederateAmbassador {
             restoreInProgress.printStackTrace();
         } catch (ObjectClassNotDefined objectClassNotDefined) {
             objectClassNotDefined.printStackTrace();
+        } catch (ObjectClassNotPublished objectClassNotPublished) {
+            objectClassNotPublished.printStackTrace();
         }
 
     }
 
     public void update(HlaDestination destination) throws RTIexception {
 
+        AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1024);
+        HLAinteger32LE x = encoderFactory.createHLAinteger32LE(destination.getX());
+        HLAinteger32LE y = encoderFactory.createHLAinteger32LE(destination.getY());
+        attributeValues.put(attributeX, x.toByteArray());
+        attributeValues.put(attributeY, y.toByteArray());
+        rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, new byte[0]);
 
     }
 }

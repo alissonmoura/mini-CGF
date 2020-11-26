@@ -3,7 +3,9 @@ package hla.exercise.aircraft;
 import hla.aircraft.AircraftCallback;
 import hla.aircraft.HlaAircraft;
 import hla.rti1516e.*;
+import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
 
 import java.net.MalformedURLException;
@@ -53,7 +55,7 @@ public class AircraftFederate extends NullFederateAmbassador {
         }
 
         rtIambassador.joinFederationExecution(federationType,federationExecutionName);
-        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Aircraft");
+        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
 
 
     }
@@ -98,5 +100,16 @@ public class AircraftFederate extends NullFederateAmbassador {
     public void update(HlaAircraft aircraft) throws RTIexception {
 
 
+    }
+
+    @Override
+    public void reflectAttributeValues(ObjectInstanceHandle theObject,
+                                       AttributeHandleValueMap theAttributes,
+                                       byte[] userSuppliedTag,
+                                       OrderType sentOrdering,
+                                       TransportationTypeHandle theTransport,
+                                       SupplementalReflectInfo reflectInfo) throws FederateInternalError {
+
+        
     }
 }
