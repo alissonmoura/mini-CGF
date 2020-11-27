@@ -6,8 +6,8 @@ import hla.destination.HlaDestination;
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAfloat64LE;
 import hla.rti1516e.encoding.HLAinteger32LE;
-import hla.rti1516e.encoding.HLAunicodeString;
 import hla.rti1516e.exceptions.*;
 import util.RandomCoordinate;
 
@@ -20,12 +20,23 @@ public class AircraftFederate extends NullFederateAmbassador {
     private RTIambassador rtIambassador;
     private URL formModule;
     private String formModuleName;
-    private ObjectClassHandle objectClassHandle;
+
+    private ObjectClassHandle destinationObjectClassHandle;
+    private ObjectClassHandle aircraftObjectClassHandle;
+
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
-    private AttributeHandle attributeX;
-    private AttributeHandle attributeY;
+
+    private AttributeHandle destinationAttributeX;
+    private AttributeHandle destinationAttributeY;
+
+    private AttributeHandle aircraftAttributeX;
+    private AttributeHandle aircraftAttributeY;
+    private AttributeHandle aircraftOrientation;
+
+    private ObjectInstanceHandle aircraftObjectInstanceHandle;
+
     private HlaDestination destination = new HlaDestination(RandomCoordinate.getX(), RandomCoordinate.getY());
     private AircraftCallback aircraftCallback;
 
@@ -38,7 +49,6 @@ public class AircraftFederate extends NullFederateAmbassador {
     }
 
     public AircraftFederate() {
-
 
     }
 
@@ -63,26 +73,39 @@ public class AircraftFederate extends NullFederateAmbassador {
         }
 
         rtIambassador.joinFederationExecution(federationType,federationExecutionName);
-        objectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
 
-
+        destinationObjectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Destination");
+        aircraftObjectClassHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Aircraft");
     }
 
     public void register(HlaAircraft aircraft) {
         // TODO Auto-generated method stub
 
         try {
-            attributeX = rtIambassador.getAttributeHandle(objectClassHandle, "x");
-            attributeY = rtIambassador.getAttributeHandle(objectClassHandle, "y");
-
             AttributeHandleSetFactory attributeHandleSetFactory = rtIambassador.getAttributeHandleSetFactory();
-
             AttributeHandleSet attributeHandleSet = attributeHandleSetFactory.create();
-            attributeHandleSet.add(attributeX);
-            attributeHandleSet.add(attributeY);
 
-            rtIambassador.subscribeObjectClassAttributes(objectClassHandle, attributeHandleSet);
+            destinationAttributeX = rtIambassador.getAttributeHandle(destinationObjectClassHandle, "x");
+            destinationAttributeY = rtIambassador.getAttributeHandle(destinationObjectClassHandle, "y");
 
+            attributeHandleSet.add(destinationAttributeX);
+            attributeHandleSet.add(destinationAttributeY);
+
+            rtIambassador.subscribeObjectClassAttributes(destinationObjectClassHandle, attributeHandleSet);
+
+            attributeHandleSet.clear();
+
+            aircraftAttributeX = rtIambassador.getAttributeHandle(aircraftObjectClassHandle, "x");
+            aircraftAttributeY = rtIambassador.getAttributeHandle(aircraftObjectClassHandle, "y");
+            aircraftOrientation = rtIambassador.getAttributeHandle(aircraftObjectClassHandle, "orientation");
+
+            attributeHandleSet.add(aircraftAttributeX);
+            attributeHandleSet.add(aircraftAttributeY);
+            attributeHandleSet.add(aircraftOrientation);
+
+            rtIambassador.publishObjectClassAttributes(aircraftObjectClassHandle, attributeHandleSet);
+
+            aircraftObjectInstanceHandle = rtIambassador.registerObjectInstance(aircraftObjectClassHandle);
         } catch (NameNotFound nameNotFound) {
             nameNotFound.printStackTrace();
         } catch (InvalidObjectClassHandle invalidObjectClassHandle) {
@@ -101,6 +124,8 @@ public class AircraftFederate extends NullFederateAmbassador {
             restoreInProgress.printStackTrace();
         } catch (ObjectClassNotDefined objectClassNotDefined) {
             objectClassNotDefined.printStackTrace();
+        } catch (ObjectClassNotPublished objectClassNotPublished) {
+            objectClassNotPublished.printStackTrace();
         }
 
     }
@@ -109,6 +134,14 @@ public class AircraftFederate extends NullFederateAmbassador {
 
         this.aircraftCallback.reflect(destination);
 
+        AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1024);
+        HLAfloat64LE x = encoderFactory.createHLAfloat64LE(aircraft.getX());
+        HLAfloat64LE y = encoderFactory.createHLAfloat64LE(aircraft.getY());
+        HLAfloat64LE orientation = encoderFactory.createHLAfloat64LE(aircraft.getOrientation());
+        attributeValues.put(aircraftAttributeX, x.toByteArray());
+        attributeValues.put(aircraftAttributeY, y.toByteArray());
+        attributeValues.put(aircraftOrientation, orientation.toByteArray());
+        rtIambassador.updateAttributeValues(aircraftObjectInstanceHandle, attributeValues, new byte[0]);
     }
 
     @Override
@@ -124,19 +157,18 @@ public class AircraftFederate extends NullFederateAmbassador {
             final HLAinteger32LE xDecoder = encoderFactory.createHLAinteger32LE();
             final HLAinteger32LE yDecoder = encoderFactory.createHLAinteger32LE();
 
-            if (theAttributes.containsKey(attributeX)) {
-                xDecoder.decode(theAttributes.get(attributeX));
+            if (theAttributes.containsKey(destinationAttributeX)) {
+                xDecoder.decode(theAttributes.get(destinationAttributeX));
                 int x = xDecoder.getValue();
-                System.out.println("X -> " + x);
+                //System.out.println("X -> " + x);
                 destination.setX(x);
             }
-            if (theAttributes.containsKey(attributeY)) {
-                yDecoder.decode(theAttributes.get(attributeY));
+            if (theAttributes.containsKey(destinationAttributeY)) {
+                yDecoder.decode(theAttributes.get(destinationAttributeY));
                 int y = yDecoder.getValue();
-                System.out.println("Y -> " + y);
+                //System.out.println("Y -> " + y);
                 destination.setY(y);
             }
-
         } catch (DecoderException e) {
             System.out.println("Failed to decode incoming attribute");
         }
