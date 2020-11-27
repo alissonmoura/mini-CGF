@@ -1,11 +1,13 @@
 package hla.exercise.destination;
 
+import hla.aircraft.HlaAircraft;
 import hla.destination.DestinationCallback;
+import hla.destination.DestinationChangedListener;
 import hla.destination.HlaDestination;
 import hla.rti1516e.*;
-import hla.rti1516e.encoding.EncoderFactory;
-import hla.rti1516e.encoding.HLAinteger32LE;
+import hla.rti1516e.encoding.*;
 import hla.rti1516e.exceptions.*;
+import util.RandomCoordinate;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,12 +26,20 @@ public class DestinationFederate extends NullFederateAmbassador {
     private AttributeHandle attributeX;
     private AttributeHandle attributeY;
     private ObjectInstanceHandle objectInstanceHandle;
+    private AttributeHandle attributeXAircraft;
+    private AttributeHandle attributeYAircraft;
+    private AttributeHandle attributeOrientation;
+    private HlaAircraft aircraft = new HlaAircraft(0,0);
+    private DestinationCallback destinationCallback;
+
 
 
     public DestinationFederate(DestinationCallback destinationCallback) {
         formModuleName = "HLA-course.xml";
         federationExecutionName = "aircraft-destination";
         federationType = "Destination";
+        this.destinationCallback = destinationCallback;
+
     }
 
     public DestinationFederate() {
@@ -76,8 +86,26 @@ public class DestinationFederate extends NullFederateAmbassador {
         objectClassAircraftHandle = rtIambassador.getObjectClassHandle("HLAobjectRoot.Aircraft");
     }
 
-    public void register(HlaDestination destination) {
+    public void register(HlaDestination destination) throws NotConnected, AttributeNotDefined, NameNotFound, RestoreInProgress, ObjectClassNotDefined, SaveInProgress, FederateNotExecutionMember, RTIinternalError, InvalidObjectClassHandle {
         registerDestination();
+        registerAircraft();
+    }
+
+    private void registerAircraft() throws NameNotFound, FederateNotExecutionMember, NotConnected, RTIinternalError, InvalidObjectClassHandle, AttributeNotDefined, ObjectClassNotDefined, RestoreInProgress, SaveInProgress {
+        attributeXAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "x");
+        attributeYAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "y");
+        attributeOrientation = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "orientation");
+
+
+        AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
+
+
+        attributeSet.add(attributeXAircraft);
+        attributeSet.add(attributeYAircraft);
+        attributeSet.add(attributeOrientation);
+
+
+        rtIambassador.subscribeObjectClassAttributes(objectClassAircraftHandle,attributeSet);
     }
 
     private void registerDestination() {
@@ -112,6 +140,56 @@ public class DestinationFederate extends NullFederateAmbassador {
         }
     }
 
+    @Override
+    public void discoverObjectInstance(ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName) throws FederateInternalError {
+        System.out.println("discoverObjectInstance");
+    }
+
+
+    @Override
+    public void reflectAttributeValues(ObjectInstanceHandle theObject,
+                                       AttributeHandleValueMap theAttributes,
+                                       byte[] userSuppliedTag,
+                                       OrderType sentOrdering,
+                                       TransportationTypeHandle theTransport,
+                                       SupplementalReflectInfo reflectInfo)
+    {
+        System.out.println("PASSEI NO REFLECT DO DESTINATION....");
+
+        try {
+            final HLAfloat64LE xDecoder = encoderFactory.createHLAfloat64LE();
+            final HLAfloat64LE yDecoder = encoderFactory.createHLAfloat64LE();
+            final HLAfloat64LE orientationDecoder = encoderFactory.createHLAfloat64LE();
+
+            if (theAttributes.containsKey(attributeXAircraft)) {
+                xDecoder.decode(theAttributes.get(attributeXAircraft));
+                double x = xDecoder.getValue();
+                aircraft.setX(x);
+            }
+            if (theAttributes.containsKey(attributeYAircraft)) {
+                yDecoder.decode(theAttributes.get(attributeYAircraft));
+                double y = yDecoder.getValue();
+                aircraft.setY(y);
+            }
+            if (theAttributes.containsKey(attributeOrientation)) {
+                orientationDecoder.decode(theAttributes.get(attributeYAircraft));
+                double o = orientationDecoder.getValue();
+                System.out.println("Orientation -> " + o);
+                aircraft.setOrientation(o/180);
+            }
+            destinationCallback.reflect(aircraft);
+
+
+
+        } catch (DecoderException e) {
+            System.out.println("Failed to decode incoming attribute");
+        }
+
+
+    }
+
+
+
     public void update(HlaDestination destination) throws RTIexception {
         AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1024);
         HLAinteger32LE x = encoderFactory.createHLAinteger32LE(destination.getX());
@@ -119,6 +197,5 @@ public class DestinationFederate extends NullFederateAmbassador {
         attributeValues.put(attributeX, x.toByteArray());
         attributeValues.put(attributeY, y.toByteArray());
         rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, new byte[0]);
-        System.out.println("PASSEI");
     }
 }

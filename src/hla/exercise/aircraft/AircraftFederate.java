@@ -141,11 +141,15 @@ public class AircraftFederate extends NullFederateAmbassador {
         AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1024);
         HLAfloat64LE x = encoderFactory.createHLAfloat64LE(aircraft.getX());
         HLAfloat64LE y = encoderFactory.createHLAfloat64LE(aircraft.getY());
+        System.out.println(aircraft.getOrientation());
+
         HLAfloat64LE orientation = encoderFactory.createHLAfloat64LE(aircraft.getOrientation());
+
 
         attributeXAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "x");
         attributeYAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "y");
         attributeOrientationAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "orientation");
+
 
         attributeValues.put(attributeXAircraft, x.toByteArray());
         attributeValues.put(attributeYAircraft, y.toByteArray());
