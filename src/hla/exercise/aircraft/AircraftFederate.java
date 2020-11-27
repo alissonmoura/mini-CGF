@@ -24,8 +24,10 @@ public class AircraftFederate extends NullFederateAmbassador {
     private String federationType;
     private String federationExecutionName;
     private EncoderFactory encoderFactory;
-    private AttributeHandle attributeX;
-    private AttributeHandle attributeY;
+    private AttributeHandle attributeXDestination;
+    private AttributeHandle attributeXAircraft;
+    private AttributeHandle attributeYAircraft;
+    private AttributeHandle attributeYDestination;
     private AttributeHandle attributeOrientation;
     private HlaDestination destination = new HlaDestination(RandomCoordinate.getX(), RandomCoordinate.getY());
     private AircraftCallback aircraftCallback;
@@ -75,16 +77,17 @@ public class AircraftFederate extends NullFederateAmbassador {
     }
 
     private void registerDestination() throws NameNotFound, InvalidObjectClassHandle, FederateNotExecutionMember, NotConnected, RTIinternalError, AttributeNotDefined, ObjectClassNotDefined, SaveInProgress, RestoreInProgress {
-        attributeX = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "x");
-        attributeY = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "y");
+        //TODO rewrite attributX and Y - put better names
+        attributeXDestination = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "x");
+        attributeYDestination = rtIambassador.getAttributeHandle(objectClassDestinationHandle, "y");
         //attributeOrientation = rtIambassador.getAttributeHandle(objectClassHandle, "orientation");
 
 
         AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
 
 
-        attributeSet.add(attributeX);
-        attributeSet.add(attributeY);
+        attributeSet.add(attributeXDestination);
+        attributeSet.add(attributeYDestination);
         //attributeSet.add(attributeOrientation);
 
 
@@ -93,11 +96,11 @@ public class AircraftFederate extends NullFederateAmbassador {
 
     private void registerAircraft() {
         try {
-            attributeX = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "x");
-            attributeY = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "y");
+            attributeXAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "x");
+            attributeYAircraft = rtIambassador.getAttributeHandle(objectClassAircraftHandle, "y");
             AttributeHandleSet attributeSet = rtIambassador.getAttributeHandleSetFactory().create();
-            attributeSet.add(attributeX);
-            attributeSet.add(attributeY);
+            attributeSet.add(attributeXAircraft);
+            attributeSet.add(attributeYAircraft);
             rtIambassador.publishObjectClassAttributes(objectClassAircraftHandle, attributeSet);
             objectInstanceAircraftHandle = rtIambassador.registerObjectInstance(objectClassAircraftHandle);
         } catch (NotConnected notConnected) {
@@ -140,19 +143,20 @@ public class AircraftFederate extends NullFederateAmbassador {
                                        TransportationTypeHandle theTransport,
                                        SupplementalReflectInfo reflectInfo)
     {
+        System.out.println("PASSEI.....");
 
         try {
             final HLAinteger32LE xDecoder = encoderFactory.createHLAinteger32LE();
             final HLAinteger32LE yDecoder = encoderFactory.createHLAinteger32LE();
 
-            if (theAttributes.containsKey(attributeX)) {
-                xDecoder.decode(theAttributes.get(attributeX));
+            if (theAttributes.containsKey(attributeXDestination)) {
+                xDecoder.decode(theAttributes.get(attributeXDestination));
                 int x = xDecoder.getValue();
                 System.out.println("X -> " + x);
                 destination.setX(x);
             }
-            if (theAttributes.containsKey(attributeY)) {
-                yDecoder.decode(theAttributes.get(attributeY));
+            if (theAttributes.containsKey(attributeYDestination)) {
+                yDecoder.decode(theAttributes.get(attributeYDestination));
                 int y = yDecoder.getValue();
                 System.out.println("Y -> " + y);
                 destination.setY(y);

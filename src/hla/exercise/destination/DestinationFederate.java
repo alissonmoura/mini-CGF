@@ -119,5 +119,6 @@ public class DestinationFederate extends NullFederateAmbassador {
         attributeValues.put(attributeX, x.toByteArray());
         attributeValues.put(attributeY, y.toByteArray());
         rtIambassador.updateAttributeValues(objectInstanceHandle, attributeValues, new byte[0]);
+        System.out.println("PASSEI");
     }
 }
