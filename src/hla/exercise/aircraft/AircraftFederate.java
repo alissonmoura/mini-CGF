@@ -128,20 +128,17 @@ public class AircraftFederate extends NullFederateAmbassador {
 
     @Override
     public void discoverObjectInstance(ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName) throws FederateInternalError {
-        System.out.println("discoverObjectInstance");
     }
 
     public void update(HlaAircraft aircraft) throws RTIexception {
         updateAircraftDestination();
         updateAircraftsAttributes(aircraft);
-        System.out.println("PASSEI");
     }
 
     private void updateAircraftsAttributes(HlaAircraft aircraft) throws FederateNotExecutionMember, NotConnected, NameNotFound, InvalidObjectClassHandle, RTIinternalError, AttributeNotOwned, AttributeNotDefined, ObjectInstanceNotKnown, SaveInProgress, RestoreInProgress {
         AttributeHandleValueMap attributeValues = rtIambassador.getAttributeHandleValueMapFactory().create(1024);
         HLAfloat64LE x = encoderFactory.createHLAfloat64LE(aircraft.getX());
         HLAfloat64LE y = encoderFactory.createHLAfloat64LE(aircraft.getY());
-        System.out.println(aircraft.getOrientation());
 
         HLAfloat64LE orientation = encoderFactory.createHLAfloat64LE(aircraft.getOrientation());
 
@@ -176,13 +173,11 @@ public class AircraftFederate extends NullFederateAmbassador {
             if (theAttributes.containsKey(attributeXDestination)) {
                 xDecoder.decode(theAttributes.get(attributeXDestination));
                 int x = xDecoder.getValue();
-                System.out.println("X -> " + x);
                 destination.setX(x);
             }
             if (theAttributes.containsKey(attributeYDestination)) {
                 yDecoder.decode(theAttributes.get(attributeYDestination));
                 int y = yDecoder.getValue();
-                System.out.println("Y -> " + y);
                 destination.setY(y);
             }
 

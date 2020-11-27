@@ -142,7 +142,6 @@ public class DestinationFederate extends NullFederateAmbassador {
 
     @Override
     public void discoverObjectInstance(ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName) throws FederateInternalError {
-        System.out.println("discoverObjectInstance");
     }
 
 
@@ -154,7 +153,6 @@ public class DestinationFederate extends NullFederateAmbassador {
                                        TransportationTypeHandle theTransport,
                                        SupplementalReflectInfo reflectInfo)
     {
-        System.out.println("PASSEI NO REFLECT DO DESTINATION....");
 
         try {
             final HLAfloat64LE xDecoder = encoderFactory.createHLAfloat64LE();
@@ -172,10 +170,9 @@ public class DestinationFederate extends NullFederateAmbassador {
                 aircraft.setY(y);
             }
             if (theAttributes.containsKey(attributeOrientation)) {
-                orientationDecoder.decode(theAttributes.get(attributeYAircraft));
+                orientationDecoder.decode(theAttributes.get(attributeOrientation));
                 double o = orientationDecoder.getValue();
-                System.out.println("Orientation -> " + o);
-                aircraft.setOrientation(o/180);
+                aircraft.setOrientation(o);
             }
             destinationCallback.reflect(aircraft);
 
